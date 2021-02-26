@@ -64,9 +64,25 @@ jobs:
         if: ${{ success() }}
         run: echo "::set-output name=${{ matrix.arch }}::${{ github.event.inputs.version }}-${{ matrix.arch }}"
 
-  create-manifest:
+  create-release:
     if: always()
     needs: build-images
+    runs-on: ubuntu-18.04
+    steps:
+      -
+        name: "Checkout Che Dashboard source code"
+        uses: actions/checkout@v2
+      -
+        name: "Create release"
+        run: |
+          git config --global user.name "Prabhav Thali"
+          git config --global user.email "Prabhav.Thali1@ibm.com"
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          /bin/bash make-release.sh --version ${{ github.event.inputs.version }} --trigger-release
+
+  create-manifest:
+    if: always()
+    needs: create-release
     runs-on: ubuntu-18.04
     steps:
       -
@@ -76,13 +92,6 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
-      -
-        name: "Create release"
-        run: |
-          git config --global user.name "Prabhav Thali"
-          git config --global user.email "Prabhav.Thali1@ibm.com"
-          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          /bin/bash make-release.sh --version ${{ github.event.inputs.version }} --trigger-release
       -
         name: "Create and push manifest"
         run: |
