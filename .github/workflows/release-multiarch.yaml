@@ -64,17 +64,6 @@ jobs:
         if: ${{ success() }}
         run: echo "::set-output name=${{ matrix.arch }}::${{ github.event.inputs.version }}-${{ matrix.arch }}"
 
-
-  Create Release:
-    steps:
-      -
-        name: "Create release"
-        run: |
-          git config --global user.name "Prabhav Thali"
-          git config --global user.email "Prabhav.Thali1@ibm.com"
-          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          /bin/bash make-release.sh --version ${{ github.event.inputs.version }} --trigger-release
-
   create-manifest:
     if: always()
     needs: build-images
@@ -87,6 +76,13 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
+      -
+        name: "Create release"
+        run: |
+          git config --global user.name "Prabhav Thali"
+          git config --global user.email "Prabhav.Thali1@ibm.com"
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          /bin/bash make-release.sh --version ${{ github.event.inputs.version }} --trigger-release
       -
         name: "Create and push manifest"
         run: |
