@@ -66,6 +66,9 @@ jobs:
 
 
   Create Release:
+    steps:
+      -
+        name: "Create release"
         run: |
           git config --global user.name "Prabhav Thali"
           git config --global user.email "Prabhav.Thali1@ibm.com"
