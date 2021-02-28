@@ -64,20 +64,6 @@ jobs:
         if: ${{ success() }}
         run: echo "::set-output name=${{ matrix.arch }}::${{ github.event.inputs.version }}-${{ matrix.arch }}"
 
-  create-release:
-    runs-on: ubuntu-18.04
-    steps:
-      -
-        name: "Checkout Che Dashboard source code"
-        uses: actions/checkout@v2
-      -
-        name: "Create release"
-        run: |
-          git config --global user.name "Prabhav Thali"
-          git config --global user.email "Prabhav.Thali1@ibm.com"
-          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          /bin/bash make-release.sh --version ${{ github.event.inputs.version }} --trigger-release
-
   create-manifest:
     if: always()
     needs: build-images
@@ -116,3 +102,17 @@ jobs:
           fi
           docker manifest create ${{ env.IMAGE }}:${{ github.event.inputs.version }} $AMEND
           docker manifest push ${{ env.IMAGE }}:${{ github.event.inputs.version }}
+
+  create-release:
+    runs-on: ubuntu-18.04
+    steps:
+      -
+        name: "Checkout Che Dashboard source code"
+        uses: actions/checkout@v2
+      -
+        name: "Create release"
+        run: |
+          git config --global user.name "Prabhav Thali"
+          git config --global user.email "Prabhav.Thali1@ibm.com"
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          /bin/bash make-release.sh --version ${{ github.event.inputs.version }} --trigger-release
