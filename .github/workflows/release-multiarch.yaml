@@ -102,8 +102,15 @@ jobs:
           fi
           docker manifest create ${{ env.IMAGE }}:${{ github.event.inputs.version }} $AMEND
           docker manifest push ${{ env.IMAGE }}:${{ github.event.inputs.version }}
+      -
+        id: result
+        name: "Create manifest result"
+        if: ${{ success() }}
+        run: echo "Manifest was created and pushed successfully"
 
   create-release:
+    if: always()
+    needs: create-manifest
     runs-on: ubuntu-18.04
     steps:
       -
