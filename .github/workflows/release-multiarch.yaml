@@ -122,4 +122,4 @@ jobs:
           git config --global user.name "Prabhav Thali"
           git config --global user.email "Prabhav.Thali1@ibm.com"
           export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          /bin/bash make-release.sh --version ${{ github.event.inputs.version }} --trigger-release
+          /bin/bash make-release.sh --version ${{ github.event.inputs.version }} --tag-release
