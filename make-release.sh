@@ -10,19 +10,17 @@
 
 # Release process automation script. 	
 # Used to create branch/tag, update VERSION files 	
-# and and trigger release by force pushing changes to the release branch 	
+# and tag the release.
 
-# set to 1 to actually trigger changes in the release branch	
-TRIGGER_BUILD=0 	
-NOCOMMIT=0	
+# set to 1 to actually tag the changes in the release branch	
 TAG_RELEASE=0
+NOCOMMIT=0
 
 while [[ "$#" -gt 0 ]]; do	
   case $1 in	
-    '-t'|'--trigger-build') TRIGGER_BUILD=1; NOCOMMIT=0; shift 0;;	
+    '-t'|'--tag-release') TAG_RELEASE=1; NOCOMMIT=0; shift 0;;	
     '-v'|'--version') VERSION="$2"; shift 1;;	
-    '-n'|'--no-commit') NOCOMMIT=1; TRIGGER_BUILD=0; shift 0;;	
-    '-b'|'--tag-release') TAG_RELEASE=1; shift 0;;
+    '-n'|'--no-commit') NOCOMMIT=1; TAG_RELEASE=0; shift 0;;	
   esac	
   shift 1	
 done	
@@ -61,8 +59,8 @@ bump_version () {
 
 usage ()	
 {	
-  echo "Usage: $0 --version [VERSION TO RELEASE] [--trigger-release]"	
-  echo "Example: $0 --version 7.7.0 --trigger-release"; echo	
+  echo "Usage: $0 --version [VERSION TO RELEASE] [--tag-release]"	
+  echo "Example: $0 --version 7.7.0 --tag-release"; echo	
 }	
 
 if [[ ! ${VERSION} ]]; then	
@@ -107,18 +105,11 @@ if [[ ${NOCOMMIT} -eq 0 ]]; then
   git push origin "${BRANCH}"	
 fi	
 
-if [[ $TRIGGER_BUILD -eq 1 ]]; then
-  git checkout "${BRANCH}"
-  docker build -t "${QUAY_REPO}" -f apache.Dockerfile .
-  docker push "${QUAY_REPO}"
-fi
-
 if [[ $TAG_RELEASE -eq 1 ]]; then	
-  # push new branch to release branch to trigger CI build	
   # tag the release	
-  git checkout "${BRANCH}"
-  git tag "${VERSION}"
-  git push origin "${VERSION}"
+  git checkout "${BRANCH}"	
+  git tag "${VERSION}"	
+  git push origin "${VERSION}"	
 fi	
 
 # now update ${BASEBRANCH} to the new snapshot version	
