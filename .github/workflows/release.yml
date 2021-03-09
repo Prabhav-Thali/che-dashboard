@@ -108,8 +108,13 @@ jobs:
       -
         id: result
         name: "Manifest result"
-        if: ${{ success() }}
-        run: echo -n "["; skopeo inspect docker://quay.io/eclipse/che-dashboard:${{ github.event.inputs.version }} --raw | jq -r '.manifests[].platform.architecture' | xargs | tr " " "," | sed -r -e "s#\$#\]#"
+        run: |
+          MANIFEST_ARCHS=$(skopeo inspect docker://${{ env.IMAGE }}:${{ github.event.inputs.version }} --raw | jq -r '.manifests[].platform.architecture' | xargs | tr " " "," | sed -r -e "s#\$##")
+          echo $MANIFEST_ARCHS
+          if [[ "amd64,arm64,ppc64le,s390x" == $MANIFEST_ARCHS ]]; then
+            echo "[!] The job 'create-manifest' failed for some architectures."
+            exit 1;
+          fi
 
   tag-release:
     if: always()
