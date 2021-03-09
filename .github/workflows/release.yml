@@ -10,7 +10,7 @@ on:
 
 env:
   IMAGE: quay.io/prabhav/che-dashboard
-  CACHE_IMAGE_FULL: docker.io/cheincubator/che-dashboard:cache
+  CACHE_IMAGE_FULL: docker.io/prabhavthali/che-dashboard:cache
 
 jobs:
 
