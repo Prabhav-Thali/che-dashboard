@@ -10,6 +10,7 @@ on:
 
 env:
   IMAGE: quay.io/prabhav/che-dashboard
+  CACHE_IMAGE_FULL: docker.io/cheincubator/che-dashboard:cache
 
 jobs:
 
@@ -53,6 +54,8 @@ jobs:
         name: "Build and push ${{ matrix.arch }}"
         uses: docker/build-push-action@v2
         with:
+          cache-from: type=registry,ref=${{ env.CACHE_IMAGE_FULL }}
+          cache-to: type=registry,ref=${{ env.CACHE_IMAGE_FULL }},mode=max
           context: .
           file: ./apache.Dockerfile
           platforms: linux/${{ matrix.arch }}
@@ -106,9 +109,9 @@ jobs:
         id: result
         name: "Manifest result"
         if: ${{ success() }}
-        run: echo "Manifest was created and pushed successfully"
+        run: echo -n "["; skopeo inspect docker://quay.io/eclipse/che-dashboard:${{ github.event.inputs.version }} --raw | jq -r '.manifests[].platform.architecture' | xargs | tr " " "," | sed -r -e "s#\$#\]#"
 
-  create-release:
+  tag-release:
     if: always()
     needs: create-manifest
     runs-on: ubuntu-18.04
@@ -117,7 +120,7 @@ jobs:
         name: "Checkout Che Dashboard source code"
         uses: actions/checkout@v2
       -
-        name: "Create release"
+        name: "Tag release"
         run: |
           git config --global user.name "Prabhav Thali"
           git config --global user.email "Prabhav.Thali1@ibm.com"
