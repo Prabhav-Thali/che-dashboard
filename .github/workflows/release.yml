@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [amd64,arm64,s390x]
+        arch: [amd64,arm64,ppc64le,s390x]
     outputs:
       amd64: ${{ steps.result.outputs.amd64 }}
       arm64: ${{ steps.result.outputs.arm64 }}
