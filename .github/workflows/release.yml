@@ -81,7 +81,7 @@ jobs:
                -z "$ARM64_VERSION" || \
                -z "$PPC64LE_VERSION" || \
                -z "$S390X_VERSION"]; then
-            echo "[!] The job 'build-images' fails on some of architectures. Can't create complete "[!] The job 'build-images' fails on some of architectures. Can't create complete manifest.";
+            echo "[!] The job 'build-images' fails on some of architectures. Can't create complete manifest.";
             exit 1;
           fi
 
@@ -100,7 +100,6 @@ jobs:
         run: echo "Manifest was created and pushed successfully"
 
   tag-release:
-    if: always()
     needs: create-manifest
     runs-on: ubuntu-18.04
     steps:
