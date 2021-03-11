@@ -10,8 +10,6 @@
 
 FROM docker.io/node:12.20.1-alpine3.12 as builder
 
-RU
-
 RUN if ! [ type "yarn" &> /dev/null ]; then \
         apk add yarn --no-cache; \
     fi
