@@ -78,10 +78,10 @@ jobs:
           PPC64LE_VERSION="${{ needs['build-images'].outputs.ppc64le }}"
           S390X_VERSION="${{ needs['build-images'].outputs.s390x }}"
 
-          if [ -z "$AMD64_VERSION" || \
+          if [[ -z "$AMD64_VERSION" || \
                -z "$ARM64_VERSION" || \
                -z "$PPC64LE_VERSION" || \
-               -z "$S390X_VERSION"]; then
+               -z "$S390X_VERSION" ]]; then
             echo "[!] The job 'build-images' fails on some of architectures. Can't create complete manifest.";
             exit 1;
           fi
